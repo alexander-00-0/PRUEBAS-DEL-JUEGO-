@@ -67,7 +67,7 @@ Métodos de control como `haySobrevivientes()` consultan únicamente la interfaz
 
 ## Prototipo visual - Etapa 1
 
-El laboratorio de movimiento ya conecta el modelo con una vista Swing y un controlador por teclado. Para probarlo, ejecutar `src/keyos/LaboratorioMain.java` desde Visual Studio Code.
+El laboratorio de movimiento ya conecta el modelo con una vista Swing y un controlador por teclado. Para probarlo, ejecutar `src/LaboratorioMain.java` desde Visual Studio Code.
 
 - Movimiento: flechas izquierda/derecha o `A`/`D`.
 - Salto: barra espaciadora.
@@ -77,7 +77,7 @@ El laboratorio de movimiento ya conecta el modelo con una vista Swing y un contr
 
 El repositorio de pruebas incorpora una maqueta visual basada en el mapa del bosque y en la lámina de sprites del personaje Ágil.
 
-- Ejecutar: `src/keyos/LaboratorioMain.java`.
+- Ejecutar: `src/LaboratorioMain.java`.
 - Movimiento: flechas o `A`/`D`.
 - Salto: espacio.
 - Alcance: escenario, sprite, animación básica y obstáculos visuales; todavía sin colisiones, armas ni enemigos.
@@ -88,9 +88,20 @@ El repositorio de pruebas incorpora una maqueta visual basada en el mapa del bos
 La maqueta ahora utiliza el mapa de nivel 1 y permite probar Ágil, Tirador o Tanque
 sin cambiar la vista ni el controlador.
 
-- Ejecutar: `src/keyos/LaboratorioMain.java`.
+- Ejecutar: `src/LaboratorioMain.java`.
 - Elegir personaje: cambiar una sola instancia dentro de `LaboratorioMain`.
 - Pantalla: la ventana se maximiza y conserva las proporciones del mapa.
 - Medidas lógicas: mapa de `1600 x 481` y personaje de `48 x 72`.
 - Alcance: movimiento, salto y animación básica; todavía sin colisiones.
 - Guía paso a paso: [`docs/ETAPA_3_TRES_PERSONAJES_Y_ESCALADO.md`](docs/ETAPA_3_TRES_PERSONAJES_Y_ESCALADO.md).
+
+## Hitbox y colisiones del nivel 1 - Etapa 4
+
+El fondo del nivel ahora tiene plataformas físicas alineadas con sus bloques
+visibles. Los tres personajes usan la misma lógica para piso, paredes, techo,
+saltos y caídas.
+
+- Verde: plataformas físicas del mapa.
+- Rojo: hitbox del personaje (`32 x 64`) dentro de su caja visual (`48 x 72`).
+- Diseño: `Personaje` y `Plataforma` implementan `Colisionable` explícitamente.
+- Guía: [`docs/ETAPA_4_HITBOX_Y_COLISIONES.md`](docs/ETAPA_4_HITBOX_Y_COLISIONES.md).
