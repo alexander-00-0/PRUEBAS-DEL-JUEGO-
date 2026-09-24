@@ -4,6 +4,7 @@ import modelo.Personaje;
 import modelo.PersonajeAgil;
 import modelo.PersonajeTanque;
 import modelo.PersonajeTirador;
+import modelo.Nivel;
 import vista.PanelJuego;
 import vista.VistaMenu;
 
@@ -34,11 +35,11 @@ public class ControladorMenu {
 
     private void iniciarJuego() {
         Personaje jugador = crearPersonaje();
-        double posicionInicialY = PanelJuego.Y_SUELO - PanelJuego.ALTO_PERSONAJE;
-        jugador.ubicar(80, posicionInicialY);
+        Nivel nivel = Nivel.crearNivelUno();
+        jugador.ubicar(nivel.getPosicionInicialX(), nivel.getPosicionInicialY());
 
-        PanelJuego panelJuego = new PanelJuego(jugador);
-        controladorJuego = new ControladorJuego(jugador, panelJuego);
+        PanelJuego panelJuego = new PanelJuego(jugador, nivel);
+        controladorJuego = new ControladorJuego(jugador, panelJuego, nivel);
 
         vista.mostrarJuego(panelJuego);
         controladorJuego.iniciar();
