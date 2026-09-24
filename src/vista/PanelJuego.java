@@ -5,27 +5,30 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import modelo.Nivel;
+import modelo.Plataforma;
 import modelo.Personaje;
 
 public class PanelJuego extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    public static final int ANCHO_MUNDO = 1600;
-    public static final int ALTO_MUNDO = 481;
-    public static final int Y_SUELO = 383;
-    public static final int ANCHO_PERSONAJE = 48;
-    public static final int ALTO_PERSONAJE = 72;
+    public static final int ANCHO_MUNDO = Nivel.ANCHO;
+    public static final int ALTO_MUNDO = Nivel.ALTO;
+    public static final int ANCHO_PERSONAJE = Personaje.ANCHO_VISUAL;
+    public static final int ALTO_PERSONAJE = Personaje.ALTO_VISUAL;
 
     private static final String RUTA_MAPA = "src/assets/mapas/mapa_nivel_1.jpeg";
     private static final Color COLOR_CIELO = new Color(247, 247, 247);
 
     private final Personaje jugador;
+    private final Nivel nivel;
     private final BufferedImage mapa;
     private final SpritePersonaje sprites;
 
@@ -34,8 +37,12 @@ public class PanelJuego extends JPanel {
     private int fotograma;
     private int contadorAnimacion;
 
-    public PanelJuego(Personaje jugador) {
+    public PanelJuego(Personaje jugador, Nivel nivel) {
+        if (jugador == null || nivel == null) {
+            throw new IllegalArgumentException("Jugador y nivel son obligatorios.");
+        }
         this.jugador = jugador;
+        this.nivel = nivel;
         this.mapa = cargarMapa();
         this.sprites = SpritePersonaje.para(jugador);
 
@@ -79,7 +86,9 @@ public class PanelJuego extends JPanel {
         int origenY = getHeight() - altoEscalado;
 
         dibujarMapa(g2, origenX, origenY, anchoEscalado, altoEscalado);
+        dibujarPlataformas(g2, escala, origenX, origenY);
         dibujarJugador(g2, escala, origenX, origenY);
+        dibujarHitboxJugador(g2, escala, origenX, origenY);
         dibujarAyuda(g2);
 
         g2.dispose();
@@ -135,20 +144,50 @@ public class PanelJuego extends JPanel {
         }
     }
 
+    private void dibujarPlataformas(Graphics2D g2, double escala, int origenX, int origenY) {
+        for (Plataforma plataforma : nivel.getPlataformas()) {
+            Rectangle hitbox = plataforma.getHitbox();
+            int x = origenX + (int) Math.round(hitbox.x * escala);
+            int y = origenY + (int) Math.round(hitbox.y * escala);
+            int ancho = Math.max(1, (int) Math.round(hitbox.width * escala));
+            int alto = Math.max(1, (int) Math.round(hitbox.height * escala));
+
+            g2.setColor(new Color(35, 205, 95, 45));
+            g2.fillRect(x, y, ancho, alto);
+            g2.setColor(new Color(20, 150, 70, 220));
+            g2.drawRect(x, y, ancho, alto);
+        }
+    }
+
+    private void dibujarHitboxJugador(Graphics2D g2, double escala,
+            int origenX, int origenY) {
+        Rectangle hitbox = jugador.getHitbox();
+        int x = origenX + (int) Math.round(hitbox.x * escala);
+        int y = origenY + (int) Math.round(hitbox.y * escala);
+        int ancho = Math.max(1, (int) Math.round(hitbox.width * escala));
+        int alto = Math.max(1, (int) Math.round(hitbox.height * escala));
+
+        g2.setColor(new Color(230, 45, 55, 55));
+        g2.fillRect(x, y, ancho, alto);
+        g2.setColor(new Color(210, 25, 35, 230));
+        g2.drawRect(x, y, ancho, alto);
+    }
+
     private void dibujarAyuda(Graphics2D g2) {
         g2.setColor(new Color(5, 14, 24, 205));
-        g2.fillRoundRect(15, 15, 440, 62, 14, 14);
+        g2.fillRoundRect(15, 15, 535, 62, 14, 14);
 
         g2.setColor(Color.WHITE);
         g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         g2.drawString(jugador.getNombre().toUpperCase()
                 + " | PERSONAJE: 48 x 72 | MAPA: 1600 x 481", 30, 40);
         g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
-        g2.drawString("Mover: flechas o A/D | Saltar: espacio | Sin colisiones", 30, 62);
+        g2.drawString("Mover: flechas o A/D | Saltar: espacio | Verde: plataformas | Rojo: hitbox",
+                30, 62);
     }
 }
 
 /*
- * Criterio aplicado: PanelJuego representa el estado del modelo y mantiene
- * una escala uniforme para conservar las proporciones en cualquier monitor.
+ * Criterio aplicado: PanelJuego representa el estado del modelo, conserva la
+ * escala del mapa y muestra las hitboxes como ayuda temporal de depuración.
  */
