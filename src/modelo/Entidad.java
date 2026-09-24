@@ -75,6 +75,10 @@ public abstract class Entidad {
         posicionY += desplazamiento;
     }
 
+    protected void fijarPosicionX(int posicionX) {
+        this.posicionX = Math.max(0, posicionX);
+    }
+
     protected void fijarPosicionY(double posicionY) {
         this.posicionY = posicionY;
     }
